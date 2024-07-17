@@ -35,6 +35,29 @@ class SearchDistanceEvaluation(SimilarityEvaluation):
         self.max_distance = max_distance
         self.positive = positive
 
+    def summarize_vector(self, vector, edge_items=5):
+        if len(vector) > 2 * edge_items:
+            return f"{list(vector[:edge_items])}...[omitted]...{list(vector[-edge_items:])} (total length: {len(vector)})"
+        return list(vector)
+
+    def print_cache_dict(self, cache_dict):
+        cache_dict_summary = cache_dict.copy()
+        
+        if 'cache_data' in cache_dict:
+            cache_data = cache_dict['cache_data']
+            if hasattr(cache_data, 'embedding_data'):
+                cache_data.embedding_data = self.summarize_vector(cache_data.embedding_data)
+            cache_dict_summary['cache_data'] = cache_data
+
+        if 'embedding' in cache_dict:
+            #cache_dict.embedding = self.summarize_vector(cache_dict.embedding)
+            #cache_dict_summary['embedding'] = cache_dict.embedding
+            embedding = cache_dict['embedding']
+            if hasattr(embedding, "__len__"):
+                cache_dict_summary['embedding'] = self.summarize_vector(embedding)
+
+        print("src_cache_dict:", cache_dict_summary)
+
     def evaluation(
         self, src_dict: Dict[str, Any], cache_dict: Dict[str, Any], **_
     ) -> float:
@@ -47,12 +70,17 @@ class SearchDistanceEvaluation(SimilarityEvaluation):
         :return: evaluation score.
         """
         distance, _ = cache_dict["search_result"]
+        self.print_cache_dict(src_dict)
+        self.print_cache_dict(cache_dict)
+        
         if distance < 0:
             distance = 0
         elif distance > self.max_distance:
             distance = self.max_distance
         if self.positive:
             return distance
+        
+        print("eval:" + str(self.max_distance - distance) + "\n\n\n")
         return self.max_distance - distance
 
     def range(self) -> Tuple[float, float]:
@@ -61,3 +89,5 @@ class SearchDistanceEvaluation(SimilarityEvaluation):
         :return: minimum and maximum of similarity score.
         """
         return 0.0, self.max_distance
+
+
