@@ -56,7 +56,19 @@ class SearchDistanceEvaluation(SimilarityEvaluation):
             if hasattr(embedding, "__len__"):
                 cache_dict_summary['embedding'] = self.summarize_vector(embedding)
 
-        print("src_cache_dict:", cache_dict_summary)
+        print("cache_dict:", cache_dict_summary)
+
+    def print_src_dict(self, src_dict):
+        src_dict_summary = src_dict.copy()
+
+        if 'embedding' in src_dict:
+            #cache_dict.embedding = self.summarize_vector(cache_dict.embedding)
+            #cache_dict_summary['embedding'] = cache_dict.embedding
+            embedding = src_dict['embedding']
+            if hasattr(embedding, "__len__"):
+                src_dict_summary['embedding'] = self.summarize_vector(embedding)
+
+        print("src_dict:", src_dict_summary)
 
     def evaluation(
         self, src_dict: Dict[str, Any], cache_dict: Dict[str, Any], **_
@@ -70,7 +82,7 @@ class SearchDistanceEvaluation(SimilarityEvaluation):
         :return: evaluation score.
         """
         distance, _ = cache_dict["search_result"]
-        self.print_cache_dict(src_dict)
+        self.print_src_dict(src_dict)
         self.print_cache_dict(cache_dict)
         
         if distance < 0:

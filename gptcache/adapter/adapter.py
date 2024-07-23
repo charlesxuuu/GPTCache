@@ -96,8 +96,12 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
             search_data_list = []
         cache_answers = []
         similarity_threshold = chat_cache.config.similarity_threshold
+        print(f"similarity_threshold: {similarity_threshold}")
         min_rank, max_rank = chat_cache.similarity_evaluation.range()
+        print(f"min_rank: {min_rank}, max_rank: {max_rank}")
         rank_threshold = (max_rank - min_rank) * similarity_threshold * cache_factor
+        print(f"Calculated rank_threshold (before clamping): {rank_threshold}")
+
         rank_threshold = (
             max_rank
             if rank_threshold > max_rank
@@ -105,6 +109,8 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
             if rank_threshold < min_rank
             else rank_threshold
         )
+        print(f"Final rank_threshold (after clamping): {rank_threshold}")
+
         for search_data in search_data_list:
             cache_data = time_cal(
                 chat_cache.data_manager.get_scalar_data,

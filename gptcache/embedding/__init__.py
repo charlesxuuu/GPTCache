@@ -1,6 +1,7 @@
 __all__ = [
     "OpenAI",
     "OpenAI3S",
+    "OpenAI3L",
     "Huggingface",
     "SBERT",
     "Cohere",
@@ -20,6 +21,7 @@ from gptcache.utils.lazy_import import LazyImport
 
 openai = LazyImport("openai", globals(), "gptcache.embedding.openai")
 openai3s = LazyImport("openai3s", globals(), "gptcache.embedding.openai3s")
+openai3l = LazyImport("openai3l", globals(), "gptcache.embedding.openai3l")
 huggingface = LazyImport("huggingface", globals(), "gptcache.embedding.huggingface")
 sbert = LazyImport("sbert", globals(), "gptcache.embedding.sbert")
 onnx = LazyImport("onnx", globals(), "gptcache.embedding.onnx")
@@ -41,8 +43,13 @@ def Cohere(model="large", api_key=None):
 def OpenAI(model="text-embedding-ada-002", api_key=None):
     return openai.OpenAI(model, api_key)
 
+
 def OpenAI3S(model="text-embedding-3-small", api_key=None):
     return openai3s.OpenAI3S(model, api_key)
+
+
+def OpenAI3L(model="text-embedding-3-large", api_key=None):
+    return openai3l.OpenAI3L(model, api_key)
 
 
 def Huggingface(model="distilbert-base-uncased"):
